@@ -1,0 +1,16 @@
+.cache
+.coverage
+.eggs
+.pytest_cache
+local
+__pycache__
+static/*.webp
+*.pyc
+*.sqlite3
+*.egg-info
+*.venv/*
+*~
+.vscode
+.idea
+.env
+.secrets.*
