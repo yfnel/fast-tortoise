@@ -25,6 +25,7 @@ class Migration(migrations.Migration):
                 ('id', fields.IntField(generated=True, primary_key=True, unique=True, db_index=True)),
                 ('event', fields.OneToOneField('models.Event', source_field='event_id', null=True, db_constraint=True, to_field='id', on_delete=OnDelete.RESTRICT)),
                 ('singleton', fields.IntField(default=1, unique=True)),
+                ('start_date', fields.DatetimeField(null=True, auto_now=False, auto_now_add=False)),
             ],
             options={'table': 'state', 'app': 'models', 'pk_attr': 'id'},
             bases=['Model'],

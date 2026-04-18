@@ -8,7 +8,7 @@ from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException, Query
 from pydantic import BaseModel, Field
 from tortoise.contrib.fastapi import RegisterTortoise
 
-from app.models import Event, EventList, EventPydantic, State
+from app.models import Event, EventList, EventPydantic, State, StatePydantic
 from app.utils import perform_restart
 from config import settings
 
@@ -17,6 +17,8 @@ from config import settings
 async def lifespan(app: FastAPI) -> AsyncGenerator[None]:  # pragma: no cover
     async with RegisterTortoise(
         app, db_url=settings.db, modules={'app': ['app.models']}, generate_schemas=True):
+        state = await State.objects.get_instance()
+        await state.update_start_date()
         yield
 
 
@@ -60,8 +62,15 @@ async def root() -> dict[str, str]:
         'base_dir': str(settings.base_dir),
     }
 
-@app.get('/state', response_model=EventPydantic | None)
+
+@app.get('/state', response_model=StatePydantic | None)
 async def state_detail() -> State | None:
+    state = await State.objects.get_instance()
+    return await StatePydantic.from_tortoise_orm(state)
+
+
+@app.get('/event', response_model=EventPydantic | None)
+async def current_event_detail() -> State | None:
     state = await State.objects.all().select_related('event').first()
     if state is None or state.event is None:
         return None
