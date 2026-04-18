@@ -40,6 +40,7 @@ class State(Model):
     event: fields.OneToOneRelation[Event] = fields.OneToOneField(
         Event, on_delete=fields.RESTRICT, null=True, default=None)
     singleton = fields.IntField(validators=[MinValueValidator(1), MaxValueValidator(1)], default=1, unique=True)
+    start_date = fields.DatetimeField(null=True, default=None)
 
     objects = StateManager()
 
@@ -50,6 +51,11 @@ class State(Model):
     def is_pending(self) -> bool:
         return self.event and self.event.finished_at is None
 
+    async def update_start_date(self) -> None:
+        self.start_date = datetime.now(tz=UTC)
+        await self.save()
 
+
+StatePydantic = pydantic_model_creator(State, exclude=('event',))
 EventPydantic = pydantic_model_creator(Event)
 EventList = pydantic_queryset_creator(Event)

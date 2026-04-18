@@ -25,14 +25,22 @@ async def test_get_empty_state(apiclient):
     response = await apiclient.get('/state')
     assert response.status_code == 200
     data = response.json()
+    assert data is not None
+
+
+@pytest.mark.asyncio
+async def test_get_empty_event(apiclient):
+    response = await apiclient.get('/event')
+    assert response.status_code == 200
+    data = response.json()
     assert data is None
 
 
 @pytest.mark.asyncio
-async def test_get_state(apiclient):
+async def test_get_event(apiclient):
     event = await Event.create(name='test')
     await State.create(event=event)
-    response = await apiclient.get('/state')
+    response = await apiclient.get('/event')
     assert response.status_code == 200
     data = response.json()
     assert data['id'] == str(event.pk)
