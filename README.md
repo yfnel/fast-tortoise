@@ -3,10 +3,6 @@
 ## installation
 * `poetry install --with utils`
 
-## OCR
-* `sudo apt install tesseract-ocr`
-* `sudo apt install tesseract-ocr-pol`
-
 ## dev server
 * `uvicorn app.main:app --reload`
 
