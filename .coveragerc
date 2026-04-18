@@ -3,4 +3,4 @@ omit =
     local/*
     *.venv/*
     */venv/*
-    migrations/*
+    app/migrations/*
