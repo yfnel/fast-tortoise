@@ -1,3 +1,4 @@
+import platform
 import subprocess
 from pathlib import Path
 
@@ -10,6 +11,7 @@ VERSION = subprocess.run(['poetry', 'version'], check=False, capture_output=True
 class Settings(BaseSettings):
     app_name: str = 'Fast-Tortoise'
     version: str = VERSION
+    platform: str = platform.platform()
     db: str = f'sqlite://{BASE_DIR / 'db.sqlite3'}'
     base_dir: Path = BASE_DIR
     restarter_file: Path = BASE_DIR / 'restart_log.txt'

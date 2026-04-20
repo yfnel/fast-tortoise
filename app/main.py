@@ -60,6 +60,7 @@ async def root() -> dict[str, str]:
         'version': settings.version,
         'db': settings.db,
         'base_dir': str(settings.base_dir),
+        'platform': settings.platform,
     }
 
 
