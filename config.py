@@ -1,16 +1,15 @@
 import platform
-import subprocess
+import tomllib
 from pathlib import Path
 
 from pydantic_settings import BaseSettings
 
 BASE_DIR = Path(__file__).resolve().parent
-VERSION = subprocess.run(['poetry', 'version'], check=False, capture_output=True, text=True).stdout.strip()  # noqa: S607
 
 
 class Settings(BaseSettings):
     app_name: str = 'Fast-Tortoise'
-    version: str = VERSION
+    version: str = tomllib.load((BASE_DIR / 'pyproject.toml').open('rb'))['tool']['poetry']['version']
     platform: str = platform.platform()
     db: str = f'sqlite://{BASE_DIR / 'db.sqlite3'}'
     base_dir: Path = BASE_DIR
