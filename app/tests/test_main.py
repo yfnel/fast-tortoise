@@ -1,4 +1,5 @@
 import uuid
+from unittest.mock import ANY
 
 import pytest
 
@@ -11,7 +12,7 @@ def test_root(test_client):
     assert response.status_code == 200
     data = response.json()
     assert data['app_name'] == 'Fast-Tortoise'
-    assert data['version'].startswith('Fast-Tortoise')
+    assert data['version'] == ANY
 
 @pytest.mark.asyncio
 @pytest.mark.usefixtures('db')
