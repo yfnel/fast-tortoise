@@ -8,15 +8,15 @@ from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException, Query
 from pydantic import BaseModel, Field
 from tortoise.contrib.fastapi import RegisterTortoise
 
+import config
 from app.models import Event, EventList, EventPydantic, State, StatePydantic
 from app.utils import perform_restart
-from config import settings
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None]:  # pragma: no cover
     async with RegisterTortoise(
-        app, db_url=settings.db, modules={'app': ['app.models']}, generate_schemas=True):
+        app, db_url=config.settings.db, modules={'app': ['app.models']}, generate_schemas=True):
         state = await State.objects.get_instance()
         await state.update_start_date()
         yield
@@ -56,11 +56,11 @@ async def run_task(task: Callable, event: Event) -> None:
 @app.get('/')
 async def root() -> dict[str, str]:
     return {
-        'app_name': settings.app_name,
-        'version': settings.version,
-        'db': settings.db,
-        'base_dir': str(settings.base_dir),
-        'platform': settings.platform,
+        'app_name': config.settings.app_name,
+        'version': config.VERSION,
+        'db': config.settings.db,
+        'base_dir': str(config.BASE_DIR),
+        'platform': config.PLATFORM,
     }
 
 
