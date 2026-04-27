@@ -11,7 +11,7 @@ PLATFORM: str = platform.platform()
 class Settings(BaseSettings):
     app_name: str = 'Fast-Tortoise'
     db: str = f'sqlite://{BASE_DIR / 'db.sqlite3'}'
-    restarter_file: Path = BASE_DIR / 'restart_log.txt'
+    restarter_file: Path = BASE_DIR / 'reload_dir' / 'reload_log.txt'
 
 
 settings = Settings()
