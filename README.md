@@ -12,7 +12,7 @@
 * `uvicorn app.main:app --reload`
 
 ## server with remote reload
-* `uvicorn app.main:app --reload --reload-dir 'reload_dir' --reload-include 'restart_log.txt'`
+* `uvicorn app.main:app --reload --reload-dir 'reload_dir' --reload-include 'reload_log.txt'`
 
 ## tests
 * `py.test -s --cov . --cov-report=term-missing --cov-fail-under=100 --no-cov-on-fail --tb long`
