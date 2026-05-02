@@ -4,4 +4,3 @@ omit =
     *.venv/*
     */venv/*
     app/migrations/*
-    commands.py

@@ -3,8 +3,8 @@ from unittest.mock import ANY
 
 import pytest
 
+import config
 from app.models import Event, State
-from config import settings
 
 
 def test_root(test_client):
@@ -113,8 +113,8 @@ async def test_restart_app(apiclient):
     assert response.status_code == 200
     data = response.json()
     assert data is None
-    assert settings.restarter_file.exists()
-    settings.restarter_file.unlink()
+    assert config.RESTARTER_FILE.exists()
+    config.RESTARTER_FILE.unlink()
 
 
 @pytest.mark.asyncio
@@ -125,7 +125,7 @@ async def test_force_restart_app(apiclient):
     assert response.status_code == 200
     data = response.json()
     assert data is None
-    assert settings.restarter_file.exists()
-    settings.restarter_file.unlink()
+    assert config.RESTARTER_FILE.exists()
+    config.RESTARTER_FILE.unlink()
     await event.refresh_from_db()
     assert event.finished_at is not None
