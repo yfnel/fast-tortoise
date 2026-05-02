@@ -1,16 +1,16 @@
-import importlib
 import uuid
 from collections.abc import AsyncGenerator, Callable
 from contextlib import asynccontextmanager
 from typing import Annotated
 
+from anyio import to_thread
 from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException, Query
 from pydantic import BaseModel, Field
 from tortoise.contrib.fastapi import RegisterTortoise
 
 import config
 from app.models import Event, EventList, EventPydantic, State, StatePydantic
-from app.utils import perform_restart
+from app.utils import get_module, perform_restart
 
 
 @asynccontextmanager
@@ -30,13 +30,12 @@ async def get_state() -> State | HTTPException:
 
 
 async def get_task(task: str) -> Callable | HTTPException:
-    try:
-        task = importlib.import_module(f'tasks.{task}')
-    except ModuleNotFoundError:
+    task_module = get_module(task)
+    if not task_module:
         raise HTTPException(status_code=404) from None
-    if not hasattr(task, 'run'):  # pragma: no cover
+    if not hasattr(task_module, 'run'):  # pragma: no cover
         raise HTTPException(status_code=400, detail='Task must have "run" method.')
-    return task.run
+    return task_module.run
 
 
 StateDep = Annotated[State, Depends(get_state)]
@@ -48,7 +47,7 @@ app = FastAPI(lifespan=lifespan)
 
 async def run_task(task: Callable, event: Event) -> None:
     try:
-        await task()
+        await to_thread.run_sync(task)
     finally:
         await event.finish()
 
@@ -61,6 +60,7 @@ async def root() -> dict[str, str]:
         'db': config.settings.db,
         'base_dir': str(config.BASE_DIR),
         'platform': config.PLATFORM,
+        'env_file': str(config.ENV_FILE),
     }
 
 

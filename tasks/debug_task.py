@@ -1,4 +1,6 @@
+import logging
 
+logger = logging.getLogger(__name__)
 
-async def run() -> None:
-    return None
+def run() -> None:
+    logger.debug('hello from %s', __name__)
